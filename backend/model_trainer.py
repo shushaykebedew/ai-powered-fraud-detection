@@ -26,20 +26,40 @@ def create_sample_model():
     # Generate synthetic data matching TransactionData model
     steps = np.random.randint(1, 744, n_samples)
     old_org = np.random.lognormal(8, 2, n_samples)
-    new_org = np.random.lognormal(8, 2, n_samples)
-    new_dest = np.random.lognormal(8, 2, n_samples)
-    diff_bal = np.random.normal(0, 1000, n_samples)
-    diff_dest = np.random.normal(0, 1000, n_samples)
-    is_transfer = np.random.choice([0, 1], n_samples, p=[0.8, 0.2])
     
-    # Basic dummy logic for generated data (matches ml_service.py Step 587)
-    fraud_probability = (
-        0.01 + 
-        0.1 * is_transfer + 
-        0.05 * (diff_bal < -10000)
+    # Simulate different types of transactions
+    amounts = np.random.lognormal(5, 2, n_samples)
+    types = np.random.choice(['TRANSFER', 'PAYMENT', 'CASH_OUT', 'CASH_IN', 'DEBIT'], n_samples)
+    
+    # Balance logic
+    new_org = np.where(np.isin(types, ['TRANSFER', 'CASH_OUT', 'PAYMENT']), old_org - amounts, old_org + amounts)
+    new_org = np.maximum(new_org, 0)
+    
+    old_dest = np.random.lognormal(8, 2, n_samples)
+    new_dest = np.where(np.isin(types, ['TRANSFER', 'CASH_OUT']), old_dest + amounts, old_dest - amounts)
+    new_dest = np.maximum(new_dest, 0)
+
+    # Inject extreme anomalies (The "8-Trillion" and "Drained" cases)
+    # Case 1: Account Draining (1% of transactions)
+    drain_idx = np.random.choice(n_samples, int(n_samples * 0.01))
+    new_org[drain_idx] = 0
+    
+    # Case 2: Astronomical Destination Jump (0.5% of transactions)
+    jump_idx = np.random.choice(n_samples, int(n_samples * 0.005))
+    new_dest[jump_idx] = 8000000000000.0
+
+    # Engineered features
+    diff_bal = new_org - old_org
+    diff_dest = new_dest - old_dest
+    is_transfer = (types == 'TRANSFER').astype(float)
+    
+    # Stronger label logic for training
+    is_fraud = (
+        ((types == 'TRANSFER') & (new_org == 0)) |
+        (diff_dest > (amounts * 10)) |
+        (amounts > 500000)
     )
-    fraud_probability = np.clip(fraud_probability, 0, 0.3)
-    y = np.random.binomial(1, fraud_probability)
+    y = is_fraud.astype(int)
 
     data = {
         'step': steps,

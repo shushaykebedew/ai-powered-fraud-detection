@@ -168,8 +168,37 @@ class MLService:
             # Make prediction
             prediction = self.model.predict(processed_features)[0]
             probabilities = self.model.predict_proba(processed_features)[0]
-            fraud_probability = probabilities[1]  # Probability of fraud (class 1)
+            fraud_probability = float(probabilities[1])  # Probability of fraud (class 1)
             
+            # --- HYBRID AI GUARDRAILS (Heuristic Overrides) ---
+            message_override = None
+            
+            # 1. Account Draining Check (Origin)
+            if transaction.type in ['TRANSFER', 'CASH_OUT'] and transaction.newbalance_orig == 0 and transaction.amount > 0:
+                if abs(transaction.amount - transaction.oldbalance_org) < 0.1:
+                    # If amount is small (<$100k) and math is correct, force as Safe
+                    if transaction.amount < 100000:
+                        fraud_probability = min(fraud_probability, 0.45) # Force "Medium/Low Risk"
+                        prediction = 0 # FORCED SAFE
+                    else:
+                        fraud_probability = max(fraud_probability, 0.92)
+                        prediction = 1
+                        message_override = "🚨 HIGH RISK - Large account depletion detected"
+            
+            # 2. Extreme Destination Jump Check (The 8-Trillion Case)
+            dest_delta = transaction.newbalance_dest - transaction.oldbalance_dest
+            if transaction.type == 'TRANSFER' and dest_delta > (transaction.amount * 1.5) and dest_delta > 1000:
+                # If destination grows way more than the amount transferred, it's anomalous
+                fraud_probability = max(fraud_probability, 0.98)
+                prediction = 1
+                message_override = "🔴 CRITICAL ALERT - Astronomical balance anomaly detected"
+
+            # 3. High Value Transaction Check
+            if transaction.amount > 1000000: # Over $1M
+                 fraud_probability = max(fraud_probability, 0.75)
+                 if not message_override:
+                     message_override = "⚠️ WARNING - High value transaction manual review"
+
             # Calculate metrics
             is_fraud = bool(prediction)
             risk_level = self._get_risk_level(fraud_probability)
@@ -178,10 +207,10 @@ class MLService:
             
             # Create message
             if is_fraud:
-                message = "⚠️ FRAUD DETECTED - High risk transaction identified"
+                message = message_override if message_override else "⚠️ FRAUD DETECTED - High risk transaction identified"
             else:
                 message = "✅ LEGITIMATE - Transaction appears normal"
-            
+                
             return {
                 "is_fraud": is_fraud,
                 "fraud_probability": round(float(fraud_probability), 4),
@@ -189,7 +218,7 @@ class MLService:
                 "confidence": round(float(confidence), 4),
                 "message": message,
                 "recommendations": recommendations,
-                "model_version": self.model_info.get("model_type", "Unknown")
+                "model_version": self.model_info.get("model_type", "RandomForestClassifier")
             }
             
         except Exception as e:
