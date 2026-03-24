@@ -8,30 +8,32 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        background: '#F8FAFC', // Slate 50
+        surface: '#FFFFFF',
         primary: {
-          50: '#eff6ff',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-        },
-        danger: {
-          50: '#fef2f2',
-          500: '#ef4444',
-          600: '#dc2626',
-          700: '#b91c1c',
+          50: '#EEF2FF',
+          100: '#E0E7FF',
+          500: '#6366F1', // Indigo 500
+          600: '#4F46E5',
+          700: '#4338CA',
         },
         success: {
-          50: '#f0fdf4',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
+          50: '#F0FDF4',
+          500: '#22C55E',
+          700: '#15803D'
         },
-        warning: {
-          50: '#fffbeb',
-          500: '#f59e0b',
-          600: '#d97706',
-          700: '#b45309',
+        danger: {
+          50: '#FEF2F2',
+          500: '#EF4444',
+          700: '#B91C1C'
         }
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+        'soft-lg': '0 10px 30px -5px rgba(0, 0, 0, 0.08)',
       }
     },
   },

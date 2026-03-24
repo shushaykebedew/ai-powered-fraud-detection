@@ -58,7 +58,7 @@ async def predict_fraud(transaction: TransactionData):
         
         # Log incoming request (without sensitive data)
         logger.info(f"Processing fraud prediction: amount=${transaction.amount}, "
-                   f"category={transaction.merchant_category}, type={transaction.transaction_type}")
+                   f"type={transaction.type}")
         
         # Make prediction
         result = ml_service.predict(transaction)
@@ -124,11 +124,10 @@ async def get_model_info():
         "model_info": ml_service.model_info,
         "api_version": settings.API_VERSION,
         "feature_names": [
-            "amount", "hour", "day_of_week", "is_weekend", 
-            "customer_age", "account_balance", "merchant_category", "transaction_type"
+            "step", "oldbalance_org", "newbalance_orig", "newbalance_dest", 
+            "diff_new_old_balance", "diff_new_old_destiny", "type_TRANSFER"
         ],
-        "merchant_categories": ["grocery", "gas", "restaurant", "retail", "online", "other"],
-        "transaction_types": ["debit", "credit", "transfer", "withdrawal"],
+        "transaction_types": ["CASH_IN", "CASH_OUT", "DEBIT", "PAYMENT", "TRANSFER"],
         "risk_thresholds": {
             "low": f"< {settings.FRAUD_THRESHOLDS['low']*100:.0f}%",
             "medium": f"{settings.FRAUD_THRESHOLDS['low']*100:.0f}% - {settings.FRAUD_THRESHOLDS['medium']*100:.0f}%", 

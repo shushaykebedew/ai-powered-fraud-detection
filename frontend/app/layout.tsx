@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Fraud Detection System',
-  description: 'AI-powered fraud detection for financial transactions',
+  title: 'SafeguardAI | Enterprise Fraud Detection',
+  description: 'AI-powered transaction security and monitoring',
 }
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-background text-slate-900 antialiased`}>
         {children}
       </body>
     </html>

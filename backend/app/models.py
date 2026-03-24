@@ -8,34 +8,20 @@ class TransactionData(BaseModel):
     """
     Transaction data model for API input validation
     """
-    amount: float = Field(..., gt=0, le=1000000, description="Transaction amount in USD")
-    merchant_category: str = Field(..., description="Merchant category")
-    transaction_type: str = Field(..., description="Type of transaction")
-    hour: int = Field(..., ge=0, le=23, description="Hour of transaction (0-23)")
-    day_of_week: int = Field(..., ge=0, le=6, description="Day of week (0=Monday, 6=Sunday)")
-    is_weekend: bool = Field(..., description="Whether transaction occurs on weekend")
-    customer_age: int = Field(..., ge=18, le=120, description="Customer age in years")
-    account_balance: float = Field(..., ge=0, le=10000000, description="Account balance in USD")
+    step: int = Field(1, description="Step (Hour) of transaction")
+    type: str = Field(..., description="Type of transaction (CASH_IN, CASH_OUT, DEBIT, PAYMENT, TRANSFER)")
+    amount: float = Field(..., gt=0, description="Transaction amount")
+    oldbalance_org: float = Field(..., ge=0, description="Original balance before transaction")
+    newbalance_orig: float = Field(..., ge=0, description="Original balance after transaction")
+    oldbalance_dest: float = Field(..., ge=0, description="Destination balance before transaction")
+    newbalance_dest: float = Field(..., ge=0, description="Destination balance after transaction")
     
-    @validator('merchant_category')
-    def validate_merchant_category(cls, v):
-        valid_categories = ['grocery', 'gas', 'restaurant', 'retail', 'online', 'other']
-        if v.lower() not in valid_categories:
-            raise ValueError(f'Invalid merchant category. Must be one of: {valid_categories}')
-        return v.lower()
-    
-    @validator('transaction_type')
-    def validate_transaction_type(cls, v):
-        valid_types = ['debit', 'credit', 'transfer', 'withdrawal']
-        if v.lower() not in valid_types:
+    @validator('type')
+    def validate_type(cls, v):
+        valid_types = ['CASH_IN', 'CASH_OUT', 'DEBIT', 'PAYMENT', 'TRANSFER']
+        if v.upper() not in valid_types:
             raise ValueError(f'Invalid transaction type. Must be one of: {valid_types}')
-        return v.lower()
-    
-    @validator('day_of_week')
-    def validate_day_of_week(cls, v):
-        if v < 0 or v > 6:
-            raise ValueError('Day of week must be between 0 (Monday) and 6 (Sunday)')
-        return v
+        return v.upper()
 
 class PredictionResponse(BaseModel):
     """Response model for fraud prediction"""
