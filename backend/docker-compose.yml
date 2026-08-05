@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fraud_app
+      POSTGRES_PASSWORD: fraud_app_password
+      POSTGRES_DB: fraud_detection
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://fraud_app:fraud_app_password@db:5432/fraud_detection
+      JWT_SECRET_KEY: change-this-to-a-random-secret-in-production
+      CORS_ORIGINS: '["http://localhost:3000"]'
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:

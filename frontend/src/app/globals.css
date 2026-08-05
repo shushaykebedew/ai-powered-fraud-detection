@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+:root {
+  /* Ledger — deep navy analyst console, not pure black */
+  --color-bg: #0a1120;
+  --color-bg-raised: #111a2e;
+  --color-panel: #141f38;
+  --color-panel-border: #223256;
+  --color-panel-border-soft: #1a2740;
+
+  --color-text-primary: #e9eef8;
+  --color-text-secondary: #90a0c2;
+  --color-text-muted: #5c6c8f;
+
+  /* Signal palette: teal = normal, amber = elevated, red = confirmed fraud */
+  --color-signal-safe: #3ecf9e;
+  --color-signal-safe-dim: #1c4d3f;
+  --color-signal-warn: #f5a623;
+  --color-signal-warn-dim: #4d3a14;
+  --color-signal-danger: #ef4a5a;
+  --color-signal-danger-dim: #4a1c22;
+
+  --color-primary: #3ecf9e;
+  --color-primary-hover: #34b78a;
+
+  --font-display: var(--font-space-grotesk);
+  --font-body: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-bg-raised: var(--color-bg-raised);
+  --color-panel: var(--color-panel);
+  --color-panel-border: var(--color-panel-border);
+  --color-panel-border-soft: var(--color-panel-border-soft);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-signal-safe: var(--color-signal-safe);
+  --color-signal-safe-dim: var(--color-signal-safe-dim);
+  --color-signal-warn: var(--color-signal-warn);
+  --color-signal-warn-dim: var(--color-signal-warn-dim);
+  --color-signal-danger: var(--color-signal-danger);
+  --color-signal-danger-dim: var(--color-signal-danger-dim);
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  border-color: var(--color-panel-border);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(62, 207, 158, 0.08), transparent);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.font-tabular {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-signal-safe);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-panel-border);
+  border-radius: 6px;
+}
