@@ -1,0 +1,78 @@
+{
+  "model_version": "v1",
+  "model_type": "XGBClassifier",
+  "feature_schema": [
+    "step_hour_of_day",
+    "step_day",
+    "log_amount",
+    "amount",
+    "oldbalance_org",
+    "newbalance_orig",
+    "oldbalance_dest",
+    "newbalance_dest",
+    "diff_new_old_balance",
+    "diff_new_old_destiny",
+    "balance_error_orig",
+    "balance_error_dest",
+    "orig_emptied",
+    "is_merchant_dest",
+    "type_CASH_IN",
+    "type_CASH_OUT",
+    "type_DEBIT",
+    "type_PAYMENT",
+    "type_TRANSFER"
+  ],
+  "categorical_cols": [
+    "type"
+  ],
+  "numeric_cols": [
+    "step_hour_of_day",
+    "step_day",
+    "log_amount",
+    "amount",
+    "oldbalance_org",
+    "newbalance_orig",
+    "oldbalance_dest",
+    "newbalance_dest",
+    "diff_new_old_balance",
+    "diff_new_old_destiny",
+    "balance_error_orig",
+    "balance_error_dest",
+    "orig_emptied",
+    "is_merchant_dest"
+  ],
+  "raw_feature_cols": [
+    "step_hour_of_day",
+    "step_day",
+    "type",
+    "log_amount",
+    "amount",
+    "oldbalance_org",
+    "newbalance_orig",
+    "oldbalance_dest",
+    "newbalance_dest",
+    "diff_new_old_balance",
+    "diff_new_old_destiny",
+    "balance_error_orig",
+    "balance_error_dest",
+    "orig_emptied",
+    "is_merchant_dest"
+  ],
+  "decision_threshold": 0.060000000000000005,
+  "best_params": {
+    "subsample": 0.7,
+    "n_estimators": 600,
+    "min_child_weight": 5,
+    "max_depth": 5,
+    "learning_rate": 0.1,
+    "colsample_bytree": 0.6
+  },
+  "test_metrics": {
+    "roc_auc": 1.0,
+    "pr_auc": 0.9999999999999999,
+    "f1_at_threshold": 0.96,
+    "f1_at_default": 1.0
+  },
+  "training_rows": 105000,
+  "fraud_rate_train": 0.0005619047619047619
+}
